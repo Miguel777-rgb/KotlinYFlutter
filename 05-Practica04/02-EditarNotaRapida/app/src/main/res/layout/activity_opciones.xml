@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Descripción: Layout para mostrar la nota y las opciones de compartir o editar.
+ * Autor: [Tu Nombre]
+ * Fecha creación: 23/09/2025
+ * Fecha última modificación: 23/09/2025
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".OpcionesActivity">
+
+    <TextView
+        android:layout_width="376dp"
+        android:layout_height="wrap_content"
+        android:text="Vista Previa de la Nota"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvNota"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="#F1F1F1"
+        android:padding="8dp"
+        android:textSize="16sp"
+        tools:text="Este es el contenido de la nota que el usuario ha escrito." />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="113dp"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnCompartirCorreo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="Compartir por correo" />
+
+        <Button
+            android:id="@+id/btnEditarDeNuevo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Editar de nuevo" />
+
+    </LinearLayout>
+</LinearLayout>
