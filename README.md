@@ -1,111 +1,119 @@
 # Kotlin GOD :D
- 
----
-
-# 📖 Guía Rápida de Kotlin: Entrada de Usuario y Valores Aleatorios
-
-Este documento sirve como una guía básica para manejar dos operaciones comunes en Kotlin: leer datos desde el teclado y generar valores aleatorios.
+ ¡Por supuesto! Aquí tienes un resumen y los puntos destacables de los dos proyectos, listos para que los copies y pegues en tu archivo `README.md`.
 
 ---
 
-## 🔹 Leer datos por teclado con `readln()`
+# Práctica 4: Comunicación entre Actividades en Android
 
-La función `readln()` es la forma estándar en Kotlin para leer una **línea completa como `String`** desde la entrada estándar (generalmente, el teclado). Si necesitas otros tipos de datos como números, deberás realizar una conversión manual.
+Este repositorio contiene la solución a dos ejercicios enfocados en la comunicación entre `Activities` en Android utilizando Kotlin. El objetivo principal es poner en práctica el envío de datos, la recepción de resultados y la preservación del estado de la UI ante cambios de configuración (como la rotación de pantalla), **sin el uso de Fragments**.
 
-### Ejemplo Básico
+## Conceptos Clave Practicados
 
-```kotlin
-fun main() {
-    // Pedimos el nombre al usuario
-    println("Ingresa tu nombre:")
-    val nombre: String = readln()
-
-    // Pedimos la edad y la convertimos a Entero
-    println("Ingresa tu edad:")
-    val edad: Int = readln().toInt()
-
-    // Mostramos el resultado
-    println("Hola $nombre, tienes $edad años.")
-}
-```
----
-
-## 🔹 Generar valores aleatorios con `Random`
-
-Para generar números (y otros valores) aleatorios, Kotlin proporciona la clase `kotlin.random.Random`, que es muy flexible y fácil de usar.
-
-### Ejemplos Comunes
-
-```kotlin
-import kotlin.random.Random
-
-fun main() {
-    // 1. Número entero aleatorio entre 0 y 99
-    val num1 = Random.nextInt(100)
-    println("Número aleatorio (0..99): $num1")
-
-    // 2. Número entero aleatorio dentro de un rango específico (de 50 a 100)
-    val num2 = Random.nextInt(50, 101) // El límite superior es exclusivo
-    println("Número aleatorio (50..100): $num2")
-
-    // 3. Número decimal aleatorio entre 0.0 y 1.0
-    val num3 = Random.nextDouble()
-    println("Decimal aleatorio (0.0..1.0): $num3")
-
-    // 4. Booleano aleatorio (true o false)
-    val flag = Random.nextBoolean()
-    println("Boolean aleatorio: $flag")
-}
-```
+*   **Intents Explícitos**: Para iniciar una segunda actividad desde la primera.
+*   **Paso de Datos con Extras**: Envío de datos simples (Strings) y complejos (objetos `Serializable`).
+*   **Activity Result API**: Uso de `registerForActivityResult` para recibir un resultado de una actividad secundaria de forma moderna y segura.
+*   **Manejo del Ciclo de Vida**: Preservación de datos durante cambios de configuración mediante `onSaveInstanceState` y `onRestoreInstanceState`.
 
 ---
 
-## 🚀 Ejemplo práctico: Adivina el número
+## Proyecto 1: Editor de Perfil con Confirmación
 
-Este programa combina `readln()` y `Random`. El usuario definirá un rango de números y luego intentará adivinar un número secreto generado aleatoriamente dentro de ese rango.
+Una aplicación simple que permite al usuario llenar un formulario de perfil, previsualizar los datos en una segunda pantalla y confirmar o volver a editar la información.
 
-```kotlin
-import kotlin.random.Random
+### 🎯 Objetivo
 
-fun main() {
-    println("--- ¡Juego de Adivinar el Número! ---")
+Demostrar el envío de un objeto de datos completo a otra actividad y recibir un estado de confirmación (`RESULT_OK` o `RESULT_CANCELED`) de vuelta.
 
-    // 1. El usuario define el rango
-    println("Ingresa el número mínimo del rango:")
-    val min = readln().toInt()
+### ✨ Puntos Destacables
 
-    println("Ingresa el número máximo del rango:")
-    val max = readln().toInt()
+1.  **Envío de un Objeto Complejo (`Serializable`)**:
+    Se utiliza una `data class` `Usuario` que implementa la interfaz `Serializable`. Esto permite empaquetar todo el objeto de perfil en el `Intent` de una sola vez, manteniendo el código limpio y organizado.
 
-    // 2. Se genera un número aleatorio secreto
-    val numeroSecreto = Random.nextInt(min, max + 1)
-    var intentos = 0
-    var adivinado = false
+    ```kotlin
+    // En FormularioActivity.kt
+    val usuario = Usuario(nombre, edad, ciudad, correo)
+    val intent = Intent(this, ResumenActivity::class.java).apply {
+        putExtra("EXTRA_USUARIO", usuario)
+    }
+    ```
 
-    println("\nHe generado un número entre $min y $max. ¡Intenta adivinarlo!")
+2.  **Recepción de un Resultado sin Datos**:
+    El corazón de esta funcionalidad es `registerForActivityResult`. La actividad principal espera un resultado simple (confirmado o no) para actuar en consecuencia. No necesita recibir datos de vuelta, solo el código del resultado.
 
-    // 3. Bucle para que el usuario adivine
-    while (!adivinado) {
-        print("Ingresa tu número: ")
-        val intentoUsuario = readln().toInt()
-        intentos++
-
-        when {
-            intentoUsuario < numeroSecreto -> println("¡Muy bajo! Intenta de nuevo.")
-            intentoUsuario > numeroSecreto -> println("¡Muy alto! Intenta de nuevo.")
-            else -> {
-                adivinado = true
-                println("🎉 ¡Felicidades! Adivinaste el número $numeroSecreto en $intentos intentos.")
-            }
+    ```kotlin
+    // En FormularioActivity.kt
+    private val resumenActivityResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            // El usuario presionó "Confirmar"
+            Toast.makeText(this, "Perfil guardado correctamente", Toast.LENGTH_SHORT).show()
         }
     }
-}
-```
+    ```
 
-### ¿Cómo funciona este script?
-1.  **Definición del Rango**: Primero, le pide al usuario un valor mínimo y uno máximo usando `readln().toInt()`.
-2.  **Generación Aleatoria**: Utiliza `Random.nextInt(min, max + 1)` para crear un número secreto dentro del rango inclusivo que el usuario especificó.
-3.  **Bucle de Juego**: Entra en un bucle `while` que no se detendrá hasta que el número sea adivinado. En cada iteración:
-    *   Lee el intento del usuario.
-    *   Compara el intento con el número secreto y da una pista ("muy bajo" o "muy alto").
-    *   Si el usuario acierta, se muestra un mensaje de felicitación con el número de intentos y el bucle termina.
+3.  **Preservación del Estado en Múltiples Campos**:
+    `onSaveInstanceState` se utiliza para guardar el contenido de cada `EditText` individualmente. Esto asegura que si el usuario rota la pantalla mientras llena el formulario, no perderá ningún dato ingresado.
+
+    ```kotlin
+    // En FormularioActivity.kt
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("NOMBRE", etNombre.text.toString())
+        outState.putString("EDAD", etEdad.text.toString())
+        // ... y así para los demás campos
+    }
+    ```
+
+---
+
+## Proyecto 2: Editor de Nota Rápida
+
+Una aplicación que permite escribir una nota, enviarla a una pantalla de opciones para compartirla o devolverla a la pantalla de edición para continuar modificándola.
+
+### 🎯 Objetivo
+
+Practicar el envío de datos simples (un `String`) y, crucialmente, **recibir datos de vuelta** desde la segunda actividad para actualizar la UI de la primera.
+
+### ✨ Puntos Destacables
+
+1.  **Envío de Datos Simples (`String`)**:
+    A diferencia del primer proyecto, aquí solo se envía un `String`. Esto se logra fácilmente con `Intent.putExtra()` usando un par clave-valor.
+
+    ```kotlin
+    // En EditorActivity.kt
+    val intent = Intent(this, OpcionesActivity::class.java).apply {
+        putExtra("NOTA", nota)
+    }
+    ```
+
+2.  **Devolución de Datos con el Resultado**:
+    Este es el punto clave. Cuando el usuario presiona "Editar de nuevo", la `OpcionesActivity` no solo establece el resultado en `RESULT_OK`, sino que también adjunta la nota en un nuevo `Intent` para que la `EditorActivity` pueda recuperarla y restaurarla en el `EditText`.
+
+    ```kotlin
+    // En OpcionesActivity.kt (al presionar "Editar de nuevo")
+    val resultIntent = Intent().apply {
+        putExtra("NOTA_DEVUELTA", notaRecibida)
+    }
+    setResult(Activity.RESULT_OK, resultIntent)
+    finish()
+    ```
+
+    ```kotlin
+    // En EditorActivity.kt, dentro del launcher
+    if (result.resultCode == Activity.RESULT_OK) {
+        val notaEditada = result.data?.getStringExtra("NOTA_DEVUELTA")
+        etNota.setText(notaEditada)
+    }
+    ```
+
+3.  **Manejo de Estado para un Solo Campo de Texto**:
+    El uso de `onSaveInstanceState` aquí es más sencillo, pero igualmente importante. Garantiza que una nota larga no se pierda si el dispositivo rota, mejorando significativamente la experiencia del usuario.
+
+    ```kotlin
+    // En EditorActivity.kt
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("TEXTO_NOTA", etNota.text.toString())
+    }
+    ```
