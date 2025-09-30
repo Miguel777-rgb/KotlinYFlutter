@@ -1,119 +1,66 @@
 # Kotlin GOD :D
- ¡Por supuesto! Aquí tienes un resumen y los puntos destacables de los dos proyectos, listos para que los copies y pegues en tu archivo `README.md`.
+# Práctica 5: Fragments y Navegación con Android Jetpack
 
----
+## Autor
+*   **Autor:** Miguel Flores
+*   **Fecha:** 2024-09-27
 
-# Práctica 4: Comunicación entre Actividades en Android
+## Descripción del Proyecto
+Esta aplicación para Android es una demostración de los principios fundamentales de la navegación entre `Fragments` utilizando el **Navigation Component** de Android Jetpack. El proyecto simula un flujo de configuración de un pedido de comida en varios pasos, permitiendo al usuario seleccionar un plato principal, añadir extras y finalmente ver un resumen para confirmar o editar su elección.
 
-Este repositorio contiene la solución a dos ejercicios enfocados en la comunicación entre `Activities` en Android utilizando Kotlin. El objetivo principal es poner en práctica el envío de datos, la recepción de resultados y la preservación del estado de la UI ante cambios de configuración (como la rotación de pantalla), **sin el uso de Fragments**.
+## 🎯 Objetivo de la Práctica
+El objetivo principal es consolidar el conocimiento en la gestión de `Fragments` y el paso de datos entre ellos, cubriendo los siguientes escenarios:
 
-## Conceptos Clave Practicados
+-   **Navegación Simple**: Moverse de un fragment a otro.
+-   **Paso de Datos Hacia Adelante**: Enviar información del `Fragment A` al `Fragment B` utilizando `Bundle` y la acción de navegación.
+-   **Paso de Datos Hacia Atrás**: Comunicar resultados desde un `Fragment B` de vuelta a un `Fragment A` usando la API `Fragment Result` (`setFragmentResult` y `setFragmentResultListener`).
+-   **Manejo de la Pila de Navegación (Back Stack)**: Regresar a un fragment específico usando `popBackStack()` y limpiar la pila al finalizar un flujo con `popUpTo`.
 
-*   **Intents Explícitos**: Para iniciar una segunda actividad desde la primera.
-*   **Paso de Datos con Extras**: Envío de datos simples (Strings) y complejos (objetos `Serializable`).
-*   **Activity Result API**: Uso de `registerForActivityResult` para recibir un resultado de una actividad secundaria de forma moderna y segura.
-*   **Manejo del Ciclo de Vida**: Preservación de datos durante cambios de configuración mediante `onSaveInstanceState` y `onRestoreInstanceState`.
+## 🛠️ Tecnologías y Componentes Utilizados
+-   **Lenguaje**: Kotlin
+-   **IDE**: Android Studio
+-   **Arquitectura**: Single-Activity Architecture
+-   **Componentes de Jetpack**:
+    -   **Navigation Component**: Para gestionar todo el flujo de navegación.
+    -   **Fragments**: Para construir una UI modular.
+-   **Vistas (Views)**: Layouts basados en XML con `LinearLayout`, `Button`, `RadioGroup`, `CheckBox`, etc.
+-   **Paso de Datos**: `Bundle` y `Fragment Result API`.
 
----
+## 📂 Estructura del Proyecto
+El proyecto se compone de una única actividad (`MainActivity`) que actúa como host para cuatro fragments principales, orquestados por un gráfico de navegación (`nav_graph.xml`).
 
-## Proyecto 1: Editor de Perfil con Confirmación
+1.  **`MainActivity.kt`**: Contenedor principal que aloja el `NavHostFragment`.
+2.  **`res/navigation/nav_graph.xml`**: Archivo central que define todos los destinos (fragments) y las acciones de navegación entre ellos.
+3.  **Fragments**:
+    -   **`InicioFragment`**: La pantalla de bienvenida. Contiene un solo botón para iniciar el flujo del pedido.
+    -   **`SeleccionComidaFragment`**: El primer paso del pedido. El usuario elige un plato principal (Pizza, Hamburguesa, etc.).
+    -   **`SeleccionExtrasFragment`**: El segundo paso. El usuario puede añadir complementos (Bebida, Papas, etc.).
+    -   **`ResumenPedidoFragment`**: La pantalla final. Muestra un resumen del plato y los extras seleccionados. Ofrece opciones para confirmar o editar el pedido.
 
-Una aplicación simple que permite al usuario llenar un formulario de perfil, previsualizar los datos en una segunda pantalla y confirmar o volver a editar la información.
+## 🌊 Flujo de la Aplicación
 
-### 🎯 Objetivo
+El flujo de usuario es lineal y claro, con una opción para retroceder y editar.
 
-Demostrar el envío de un objeto de datos completo a otra actividad y recibir un estado de confirmación (`RESULT_OK` o `RESULT_CANCELED`) de vuelta.
+1.  **Inicio**: La aplicación se abre en `InicioFragment`.
+2.  **Crear Pedido**: Al pulsar "Nuevo Pedido", se navega a `SeleccionComidaFragment`.
+    -   `findNavController().navigate(R.id.action_inicioFragment_to_seleccionComidaFragment)`
+3.  **Seleccionar Comida**: El usuario elige una opción. Al pulsar "Siguiente":
+    -   Se crea un `Bundle` con la comida seleccionada (`comidaSeleccionada` -> `String`).
+    -   Se navega a `SeleccionExtrasFragment`, pasando el `Bundle`.
+4.  **Seleccionar Extras**: Este fragment primero recupera la comida del `Bundle` de argumentos. El usuario selecciona los extras. Al pulsar "Ver Resumen":
+    -   Se crea un nuevo `Bundle` que contiene tanto la comida (`String`) como los extras (un `Array<String>`).
+    -   Se navega a `ResumenPedidoFragment`, pasando el nuevo `Bundle`.
+5.  **Ver Resumen**: El fragment recupera toda la información de sus argumentos y la muestra.
+    -   **Opción 1: Confirmar Pedido**:
+        -   Muestra un `Toast` de confirmación.
+        -   Navega de regreso a `InicioFragment`, utilizando `app:popUpTo` y `app:popUpToInclusive="true"` en el `nav_graph.xml` para limpiar la pila de navegación y evitar que el usuario pueda volver al resumen con el botón de retroceso.
+    -   **Opción 2: Editar Pedido**:
+        -   Utiliza `setFragmentResult("requestKey", bundle)` para empaquetar los datos actuales del pedido (la comida seleccionada).
+        -   Llama a `findNavController().popBackStack()` dos veces para regresar a través del `SeleccionExtrasFragment` hasta el `SeleccionComidaFragment`.
+        -   El `SeleccionComidaFragment` está escuchando con `setFragmentResultListener("requestKey")` y, al recibir el resultado, preselecciona la opción que el usuario había elegido originalmente.
 
-### ✨ Puntos Destacables
-
-1.  **Envío de un Objeto Complejo (`Serializable`)**:
-    Se utiliza una `data class` `Usuario` que implementa la interfaz `Serializable`. Esto permite empaquetar todo el objeto de perfil en el `Intent` de una sola vez, manteniendo el código limpio y organizado.
-
-    ```kotlin
-    // En FormularioActivity.kt
-    val usuario = Usuario(nombre, edad, ciudad, correo)
-    val intent = Intent(this, ResumenActivity::class.java).apply {
-        putExtra("EXTRA_USUARIO", usuario)
-    }
-    ```
-
-2.  **Recepción de un Resultado sin Datos**:
-    El corazón de esta funcionalidad es `registerForActivityResult`. La actividad principal espera un resultado simple (confirmado o no) para actuar en consecuencia. No necesita recibir datos de vuelta, solo el código del resultado.
-
-    ```kotlin
-    // En FormularioActivity.kt
-    private val resumenActivityResultLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            // El usuario presionó "Confirmar"
-            Toast.makeText(this, "Perfil guardado correctamente", Toast.LENGTH_SHORT).show()
-        }
-    }
-    ```
-
-3.  **Preservación del Estado en Múltiples Campos**:
-    `onSaveInstanceState` se utiliza para guardar el contenido de cada `EditText` individualmente. Esto asegura que si el usuario rota la pantalla mientras llena el formulario, no perderá ningún dato ingresado.
-
-    ```kotlin
-    // En FormularioActivity.kt
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString("NOMBRE", etNombre.text.toString())
-        outState.putString("EDAD", etEdad.text.toString())
-        // ... y así para los demás campos
-    }
-    ```
-
----
-
-## Proyecto 2: Editor de Nota Rápida
-
-Una aplicación que permite escribir una nota, enviarla a una pantalla de opciones para compartirla o devolverla a la pantalla de edición para continuar modificándola.
-
-### 🎯 Objetivo
-
-Practicar el envío de datos simples (un `String`) y, crucialmente, **recibir datos de vuelta** desde la segunda actividad para actualizar la UI de la primera.
-
-### ✨ Puntos Destacables
-
-1.  **Envío de Datos Simples (`String`)**:
-    A diferencia del primer proyecto, aquí solo se envía un `String`. Esto se logra fácilmente con `Intent.putExtra()` usando un par clave-valor.
-
-    ```kotlin
-    // En EditorActivity.kt
-    val intent = Intent(this, OpcionesActivity::class.java).apply {
-        putExtra("NOTA", nota)
-    }
-    ```
-
-2.  **Devolución de Datos con el Resultado**:
-    Este es el punto clave. Cuando el usuario presiona "Editar de nuevo", la `OpcionesActivity` no solo establece el resultado en `RESULT_OK`, sino que también adjunta la nota en un nuevo `Intent` para que la `EditorActivity` pueda recuperarla y restaurarla en el `EditText`.
-
-    ```kotlin
-    // En OpcionesActivity.kt (al presionar "Editar de nuevo")
-    val resultIntent = Intent().apply {
-        putExtra("NOTA_DEVUELTA", notaRecibida)
-    }
-    setResult(Activity.RESULT_OK, resultIntent)
-    finish()
-    ```
-
-    ```kotlin
-    // En EditorActivity.kt, dentro del launcher
-    if (result.resultCode == Activity.RESULT_OK) {
-        val notaEditada = result.data?.getStringExtra("NOTA_DEVUELTA")
-        etNota.setText(notaEditada)
-    }
-    ```
-
-3.  **Manejo de Estado para un Solo Campo de Texto**:
-    El uso de `onSaveInstanceState` aquí es más sencillo, pero igualmente importante. Garantiza que una nota larga no se pierda si el dispositivo rota, mejorando significativamente la experiencia del usuario.
-
-    ```kotlin
-    // En EditorActivity.kt
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString("TEXTO_NOTA", etNota.text.toString())
-    }
-    ```
+## 🚀 Cómo Ejecutar el Proyecto
+1.  Clona este repositorio en tu máquina local.
+2.  Abre el proyecto con Android Studio.
+3.  Sincroniza las dependencias de Gradle.
+4.  Ejecuta la aplicación en un emulador o en un dispositivo físico con Android.
