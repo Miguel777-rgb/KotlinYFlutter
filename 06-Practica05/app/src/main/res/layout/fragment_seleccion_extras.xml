@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Descripción: Layout para seleccionar extras mediante CheckBoxes.
+    Autor: Miguel Flores
+    Fecha Creación: 2025-09-30
+    Fecha Última Modificación: 2025-09-30
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tv_titulo_extras"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Paso 2: Añade extras"
+        android:textSize="22sp"
+        android:layout_marginBottom="24dp"/>
+
+    <CheckBox android:id="@+id/cb_bebida" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Bebida"/>
+    <CheckBox android:id="@+id/cb_papas" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Papas Fritas"/>
+    <CheckBox android:id="@+id/cb_postre" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Postre"/>
+
+    <Button
+        android:id="@+id/btn_siguiente_extras"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ver Resumen"
+        android:layout_marginTop="32dp"/>
+
+</LinearLayout>

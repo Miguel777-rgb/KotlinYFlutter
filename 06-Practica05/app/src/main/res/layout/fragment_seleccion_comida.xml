@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Descripción: Layout para seleccionar el plato principal usando RadioButtons.
+    Autor: Miguel Flores
+    Fecha Creación: 2025-09-30
+    Fecha Última Modificación: 2025-09-30
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Paso 1: Elige tu comida"
+        android:textSize="22sp"
+        android:layout_marginBottom="24dp"/>
+
+    <RadioGroup
+        android:id="@+id/radio_group_comida"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RadioButton android:id="@+id/rb_pizza" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pizza"/>
+        <RadioButton android:id="@+id/rb_hamburguesa" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Hamburguesa"/>
+        <RadioButton android:id="@+id/rb_ensalada" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Ensalada"/>
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/btn_siguiente_comida"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Siguiente"
+        android:layout_marginTop="32dp"/>
+
+</LinearLayout>
