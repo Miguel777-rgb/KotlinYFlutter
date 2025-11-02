@@ -1,3 +1,10 @@
+/*
+ * Descripción corta:  Define la interfaz de usuario para la pantalla de bienvenida.
+ *                     Contiene un título, un mensaje y un botón de perfil.
+ * Autor: Miguel Flores
+ * Fecha Creación: 2025-11-02
+ * Fecha Última Modificación: 2025-11-02
+ */
 import 'package:flutter/material.dart';
 
 class PantallaInicio extends StatelessWidget {

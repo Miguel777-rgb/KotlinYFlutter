@@ -1,3 +1,10 @@
+/*
+ * Descripción corta:  Punto de entrada de la aplicación Flutter.
+ *                     Configura el widget MaterialApp y define la pantalla inicial a mostrar.
+ * Autor: Miguel Flores
+ * Fecha Creación: 2025-11-02
+ * Fecha Última Modificación: 2025-11-02
+ */
 import 'package:flutter/material.dart';
 import 'pantalla_inicio.dart';
 import 'pantalla_perfil.dart';

@@ -1,3 +1,10 @@
+/*
+ * Descripción corta:  Define la interfaz de usuario para la pantalla de perfil personal.
+ *                     Muestra una imagen, nombre, descripción y datos de contacto.
+ * Autor: Miguel Flores
+ * Fecha Creación: 2025-11-02
+ * Fecha Última Modificación: 2025-11-02
+ */
 import 'package:flutter/material.dart';
 
 class PantallaPerfil extends StatelessWidget {

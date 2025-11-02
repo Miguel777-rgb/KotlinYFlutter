@@ -1,3 +1,11 @@
+/*
+ * Descripción corta:  Define la interfaz de usuario para la pantalla de hobbies e intereses.
+ *                     Muestra una lista de actividades con íconos y descripciones.
+ * Autor: Miguel Flores
+ * Fecha Creación: 2025-11-02
+ * Fecha Última Modificación: 2025-11-02
+ */
+
 import 'package:flutter/material.dart';
 
 class PantallaHobbies extends StatelessWidget {
