@@ -16,6 +16,8 @@ class _UserFormScreenState extends State<UserFormScreen> {
   late String _nombre;
   String _genero = 'Masculino';
   bool _activo = true;
+  late int _edad;       // <-- NUEVO
+  late String _correo;   // <-- NUEVO
 
   @override
   void initState() {
@@ -24,8 +26,12 @@ class _UserFormScreenState extends State<UserFormScreen> {
       _nombre = widget.usuario!.nombre;
       _genero = widget.usuario!.genero;
       _activo = widget.usuario!.activo;
+      _edad = widget.usuario!.edad;       // <-- NUEVO
+      _correo = widget.usuario!.correo;   // <-- NUEVO
     } else {
       _nombre = '';
+      _edad = 0;
+      _correo = '';
     }
   }
 
@@ -39,14 +45,51 @@ class _UserFormScreenState extends State<UserFormScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column(
+          child: ListView( // Usamos ListView para evitar overflow si el teclado aparece
             children: [
               TextFormField(
                 initialValue: _nombre,
                 decoration: const InputDecoration(labelText: 'Nombre'),
                 validator: (value) =>
-                    value == null || value.isEmpty ? 'Ingrese un nombre válido' : null,
+                value == null || value.isEmpty ? 'Ingrese un nombre válido' : null,
                 onSaved: (value) => _nombre = value!,
+              ),
+              const SizedBox(height: 20),
+              // <-- NUEVO: Campo de Correo Electrónico
+              TextFormField(
+                initialValue: _correo,
+                decoration: const InputDecoration(labelText: 'Correo Electrónico'),
+                keyboardType: TextInputType.emailAddress,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Ingrese un correo electrónico';
+                  }
+                  // Expresión regular para validación de correo simple
+                  final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+                  if (!emailRegex.hasMatch(value)) {
+                    return 'Ingrese un formato de correo válido';
+                  }
+                  return null;
+                },
+                onSaved: (value) => _correo = value!,
+              ),
+              const SizedBox(height: 20),
+              // <-- NUEVO: Campo de Edad
+              TextFormField(
+                initialValue: _edad > 0 ? _edad.toString() : '',
+                decoration: const InputDecoration(labelText: 'Edad'),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Ingrese una edad';
+                  }
+                  final edad = int.tryParse(value);
+                  if (edad == null || edad <= 0) {
+                    return 'La edad debe ser un número mayor a 0';
+                  }
+                  return null;
+                },
+                onSaved: (value) => _edad = int.parse(value!),
               ),
               const SizedBox(height: 20),
               const Text('Género'),
@@ -80,7 +123,13 @@ class _UserFormScreenState extends State<UserFormScreen> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    final user = User(nombre: _nombre, genero: _genero, activo: _activo);
+                    final user = User(
+                      nombre: _nombre,
+                      genero: _genero,
+                      activo: _activo,
+                      edad: _edad,     // <-- ACTUALIZADO
+                      correo: _correo, // <-- ACTUALIZADO
+                    );
                     Navigator.pop(context, user);
                   }
                 },
