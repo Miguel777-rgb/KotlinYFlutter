@@ -3,9 +3,13 @@ import 'package:provider/provider.dart';
 import '../viewmodels/user_view_model.dart';
 import '../models/user.dart';
 import 'user_form_screen.dart';
-
+// ✅ Actividad 3.1.: Mostrar email en la pantalla CRUD
 class UserListScreen extends StatelessWidget {
-  const UserListScreen({super.key});
+  // ✅ 1. Variable para recibir el email
+  final String email;
+
+  // ✅ 2. Constructor actualizado para requerir el email
+  const UserListScreen({super.key, required this.email});
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +18,10 @@ class UserListScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lista de Usuarios'),
-        // <-- NUEVO: Switch para el filtro en la AppBar
+        // ✅ 3. Usamos el email recibido en el título
+        title: Text('Bienvenido: $email'),
+
+        // <-- Switch para el filtro en la AppBar (Mantenemos tu lógica existente)
         actions: [
           Row(
             children: [
@@ -37,11 +43,11 @@ class UserListScreen extends StatelessWidget {
           final user = viewModel.usuarios[index];
           return Card(
             child: ListTile(
-              title: Text('${user.nombre} (${user.edad} años)'), // <-- ACTUALIZADO: Muestra edad
+              title: Text('${user.nombre} (${user.edad} años)'),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(user.correo), // <-- ACTUALIZADO: Muestra correo
+                  Text(user.correo),
                   Text('${user.genero} - ${user.activo ? 'Activo' : 'Inactivo'}'),
                 ],
               ),
@@ -61,7 +67,6 @@ class UserListScreen extends StatelessWidget {
                         ),
                       );
                       if (actualizado != null && actualizado is User) {
-                        // Usamos context.read aquí porque la acción no reconstruye este widget
                         context.read<UserViewModel>().editarUsuario(index, actualizado);
                       }
                     },
